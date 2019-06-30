@@ -1489,12 +1489,21 @@ public class ContractController {
                         }
                         cell = sheetX.getRow(38 + equipmentCount + k).getCell((short) 3);
                         cell.setCellValue(new HSSFRichTextString("意见"));
-                        //4.签核意见
+                        //4.签核意见, 隐藏 成本核算员、财务会计、财务经理，这三个角色的的审批意见
                         cell = sheetX.getRow(38 + equipmentCount + k).getCell((short) 4);
-                        cell.setCellValue(new HSSFRichTextString(signContentItemList.get(k).getComment()));
+                        if(roleName.equals("成本核算员")||roleName.equals("财务会计")||roleName.equals("财务经理")) {
+                            if (displayPrice) {
+                                cell.setCellValue(new HSSFRichTextString(signContentItemList.get(k).getComment()));
+                            } else if(!signContentItemList.get(k).getComment().isEmpty()) {
+                                cell.setCellValue(new HSSFRichTextString("/"));
+                            }
+                        }else {
+                            cell.setCellValue(new HSSFRichTextString(signContentItemList.get(k).getComment()));
+                        }
                         //合并单元格
                         sheetX.addMergedRegion(new CellRangeAddress(38 + equipmentCount + k,
                                 38 + equipmentCount + k, 4, 10));
+
                     }
                     //最后删除多余一行
                     sheetX.shiftRows(38 + equipmentCount + orderSignCount + 1,
